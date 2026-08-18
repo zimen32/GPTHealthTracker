@@ -222,7 +222,7 @@ export function buildMarkdownReport(d: ExportDataset): string {
   md.push(line('Dni z danymi z urządzenia noszonego', `${watchDays}/${d.days}`), '')
 
   md.push('## Subjective wellbeing')
-  md.push('Skale subiektywne 1-10 (10 = najwyzsza wartość danej cechy).')
+  md.push('Skale subiektywne 1-10 (10 = najwyższa wartość danej cechy).')
   for (const key of WELLBEING_METRICS) md.push(metricLine(d, key))
   md.push('')
 
@@ -230,7 +230,7 @@ export function buildMarkdownReport(d: ExportDataset): string {
   for (const key of ACTIVITY_METRICS) md.push(metricLine(d, key))
   md.push(line('Dni z treningiem', `${trainingDays}/${d.days}`))
   const types = [...new Set(d.entries.map((e) => e.trainingType).filter(Boolean))]
-  if (types.length) md.push(line('Typy treningow', types.join(', ')))
+  if (types.length) md.push(line('Typy treningów', types.join(', ')))
   md.push('')
 
   md.push('## Body')
@@ -249,7 +249,7 @@ export function buildMarkdownReport(d: ExportDataset): string {
   if (caffeineTimes.length) md.push(line('Typowa godzina ostatniej kofeiny', `${caffeineTimes.sort()[Math.floor(caffeineTimes.length / 2)]} (mediana z ${caffeineTimes.length} dni)`))
   md.push(line('Alkohol', alcohol && alcohol.n > 0 ? `${fmt(alcohol.mean, 2)} jednostki/dzień (dni z danymi: ${alcohol.n}/${alcohol.days})` : 'brak danych'))
   md.push(line('Woda', water && water.n > 0 ? `${fmt((water.mean ?? 0) / 1000, 1)} l/dzień (dni z danymi: ${water.n}/${water.days})` : 'brak danych'))
-  md.push(line('Dni oznaczone jako nietypowo stresujace', `${stressDays}/${d.days}`))
+  md.push(line('Dni oznaczone jako nietypowo stresujące', `${stressDays}/${d.days}`))
   md.push(line('Dni oznaczone jako infekcja/choroba', `${illnessDays}/${d.days}`))
   md.push(line('Notatki', notes.length ? `${notes.length} wpisów (treść w sekcji Appendix)` : 'brak'))
   md.push('')

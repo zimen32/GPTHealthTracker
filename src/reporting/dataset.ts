@@ -11,12 +11,12 @@ export interface ExportDataset {
   /** Wpisy z wybranego okresu. */
   entries: DailyEntry[]
   /**
-   * Wpisy z okresu poprzedniego (tej samej dlugosci) razem z okresem biezacym.
-   * Uzywane wylacznie do porownan "wobec poprzedniego okresu" - raport opisuje tylko wybrany zakres.
+   * Wpisy z okresu poprzedniego (tej samej długości) razem z okresem biezacym.
+   * Używane wyłącznie do porownan "wobec poprzedniego okresu" - raport opisuje tylko wybrany zakres.
    */
   entriesWithHistory: DailyEntry[]
   measurements: Measurement[]
-  /** Wyniki badan z okresu. */
+  /** Wyniki badań z okresu. */
   labResults: LabResult[]
   /** Ostatni wynik kazdego parametru sprzed okresu - potrzebny do opisu zmiany. */
   previousLabResults: LabResult[]
@@ -63,7 +63,7 @@ export async function buildDataset(
   }
 }
 
-/** Data ostatniego badania laboratoryjnego - dla zakresu "od ostatnich badan". */
+/** Data ostatniego badania laboratoryjnego - dla zakresu "od ostatnich badań". */
 export async function lastLabDate(database: HealthDb = db): Promise<IsoDate | null> {
   const rows = await database.labResults.orderBy('date').last()
   return rows?.date ?? null

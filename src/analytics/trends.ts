@@ -7,19 +7,19 @@ export interface MetricSummary {
   metric: MetricDef
   /** Liczba dni z danymi w analizowanym okresie. */
   n: number
-  /** Liczba dni w okresie (rowniez tych bez danych). */
+  /** Liczba dni w okresie (również tych bez danych). */
   days: number
   mean: number | null
   median: number | null
   min: number | null
   max: number | null
   sd: number | null
-  /** Srednia z poprzedniego okresu tej samej dlugosci. */
+  /** Średnia z poprzedniego okresu tej samej długości. */
   previousMean: number | null
   previousN: number
   changePercent: number | null
   changeAbsolute: number | null
-  /** Ostatnia wartosc i jej odchylenie od osobistej normy (mediana +/- IQR). */
+  /** Ostatnia wartość i jej odchylenie od osobistej normy (mediana +/- IQR). */
   latest: number | null
   latestZ: number | null
 }
@@ -41,7 +41,7 @@ function entriesInRange(entries: DailyEntry[], from: IsoDate, to: IsoDate): Dail
 
 /**
  * Podsumowanie metryki w okresie `from`-`to` wraz z porownaniem do poprzedniego okresu
- * tej samej dlugosci. Nie zawiera zadnych ocen - tylko liczby i liczebnosc danych.
+ * tej samej długości. Nie zawiera żadnych ocen - tylko liczby i liczebność danych.
  */
 export function summarizeMetric(
   entries: DailyEntry[],
@@ -102,9 +102,9 @@ export function metricSeries(entries: DailyEntry[], metricKey: string, from: Iso
 }
 
 /**
- * Porownanie warunkowe: srednia metryki w dniach, w ktorych inna metryka byla ponizej progu,
- * kontra dni z wartoscia rowna progowi lub wyzsza. Sluzy do opisow typu
- * "rozdraznienie w dniach ze snem < 6 h 30 min".
+ * Porównanie warunkowe: średnia metryki w dniach, w których inna metryka byla poniżej progu,
+ * kontra dni z wartością rowna progowi lub wyższa. Służy do opisow typu
+ * "rozdrażnienie w dniach ze snem < 6 h 30 min".
  */
 export interface ConditionalComparison {
   belowMean: number | null

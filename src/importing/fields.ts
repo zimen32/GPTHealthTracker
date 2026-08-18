@@ -1,6 +1,7 @@
 import type { ClockTime, DailyEntry, IsoDate } from '../domain/types'
+import { normalizeKey } from '../lib/text'
 
-/** Konwersje wartosci tekstowych z pliku na typy aplikacji. Zwracaja null, gdy wartosci nie da sie odczytac. */
+/** Konwersje wartości tekstowych z pliku na typy aplikacji. Zwracaja null, gdy wartości nie da się odczytać. */
 
 export function parseNumber(raw: string): number | null {
   const s = raw.trim().replace(/\s/g, '').replace(',', '.')
@@ -47,7 +48,7 @@ export function parseClock(raw: string): ClockTime | null {
 
 /**
  * Czas trwania w minutach. Obsluguje: "412", "6:52", "6h 52m", "6 godz. 52 min", "412 min".
- * Wartosci powyzej 1440 traktowane sa jako sekundy (typowe dla eksportow z urzadzen).
+ * Wartości powyzej 1440 traktowane są jako sekundy (typowe dla eksportow z urządzeń).
  */
 export function parseDurationMinutes(raw: string): number | null {
   const s = raw.trim().toLowerCase()
@@ -80,15 +81,15 @@ export interface ImportField {
   label: string
   kind: FieldKind
   group: string
-  /** Fragmenty nazw kolumn, po ktorych rozpoznajemy pole automatycznie (male litery). */
+  /** Fragmenty nazw kolumn, po których rozpoznajemy pole automatycznie (male litery). */
   aliases: string[]
 }
 
 /** Pola wpisu dziennego dostepne w kreatorze mapowania kolumn. */
 export const IMPORT_FIELDS: ImportField[] = [
   { key: 'date', label: 'Data', kind: 'date', group: 'Podstawa', aliases: ['date', 'data', 'day', 'dzien', 'time', 'czas'] },
-  { key: 'bedtime', label: 'Pojscie do lozka', kind: 'clock', group: 'Sen', aliases: ['bedtime', 'lozko'] },
-  { key: 'sleepStart', label: 'Zasniecie', kind: 'clock', group: 'Sen', aliases: ['sleep start', 'start', 'zasniecie', 'fallasleep', 'sleep_start', 'bedtime'] },
+  { key: 'bedtime', label: 'Pójście do lozka', kind: 'clock', group: 'Sen', aliases: ['bedtime', 'lozko'] },
+  { key: 'sleepStart', label: 'Zaśnięcie', kind: 'clock', group: 'Sen', aliases: ['sleep start', 'start', 'zasniecie', 'fallasleep', 'sleep_start', 'bedtime'] },
   { key: 'wakeTime', label: 'Wybudzenie', kind: 'clock', group: 'Sen', aliases: ['wake', 'wakeup', 'wake_time', 'pobudka', 'end'] },
   { key: 'totalSleepMinutes', label: 'Sen calkowity', kind: 'duration', group: 'Sen', aliases: ['total sleep', 'sleep duration', 'sen', 'totalsleep', 'sleep_total', 'duration'] },
   { key: 'deepSleepMinutes', label: 'Sen gleboki', kind: 'duration', group: 'Sen', aliases: ['deep', 'gleboki'] },
@@ -97,21 +98,21 @@ export const IMPORT_FIELDS: ImportField[] = [
   { key: 'awakeMinutes', label: 'Czuwanie w nocy', kind: 'duration', group: 'Sen', aliases: ['awake', 'czuwanie', 'wake duration'] },
   { key: 'awakenings', label: 'Liczba wybudzen', kind: 'integer', group: 'Sen', aliases: ['awakenings', 'wybudzenia', 'wake count', 'wakecount'] },
   { key: 'sleepScore', label: 'Sleep score', kind: 'integer', group: 'Sen', aliases: ['sleep score', 'score', 'ocena snu'] },
-  { key: 'restingHeartRate', label: 'Tetno spoczynkowe', kind: 'integer', group: 'Sen', aliases: ['resting heart', 'resting hr', 'rhr', 'tetno spoczynkowe'] },
+  { key: 'restingHeartRate', label: 'Tętno spoczynkowe', kind: 'integer', group: 'Sen', aliases: ['resting heart', 'resting hr', 'rhr', 'tetno spoczynkowe'] },
   { key: 'hrv', label: 'HRV', kind: 'number', group: 'Sen', aliases: ['hrv', 'rmssd', 'sdnn'] },
   { key: 'spo2', label: 'SpO2', kind: 'number', group: 'Sen', aliases: ['spo2', 'saturacja', 'oxygen'] },
-  { key: 'steps', label: 'Kroki', kind: 'integer', group: 'Aktywnosc', aliases: ['steps', 'kroki'] },
-  { key: 'walkingMinutes', label: 'Czas chodzenia', kind: 'duration', group: 'Aktywnosc', aliases: ['walking', 'chodzenie'] },
-  { key: 'sedentaryMinutes', label: 'Czas siedzenia', kind: 'duration', group: 'Aktywnosc', aliases: ['sedentary', 'siedzenie'] },
-  { key: 'trainingMinutes', label: 'Czas treningu', kind: 'duration', group: 'Aktywnosc', aliases: ['training', 'workout', 'exercise', 'trening'] },
-  { key: 'trainingType', label: 'Typ treningu', kind: 'text', group: 'Aktywnosc', aliases: ['training type', 'sport', 'typ treningu', 'activity type'] },
-  { key: 'trainingIntensity', label: 'Intensywnosc treningu', kind: 'score', group: 'Aktywnosc', aliases: ['intensity', 'intensywnosc'] },
+  { key: 'steps', label: 'Kroki', kind: 'integer', group: 'Aktywność', aliases: ['steps', 'kroki'] },
+  { key: 'walkingMinutes', label: 'Czas chodzenia', kind: 'duration', group: 'Aktywność', aliases: ['walking', 'chodzenie'] },
+  { key: 'sedentaryMinutes', label: 'Czas siedzenia', kind: 'duration', group: 'Aktywność', aliases: ['sedentary', 'siedzenie'] },
+  { key: 'trainingMinutes', label: 'Czas treningu', kind: 'duration', group: 'Aktywność', aliases: ['training', 'workout', 'exercise', 'trening'] },
+  { key: 'trainingType', label: 'Typ treningu', kind: 'text', group: 'Aktywność', aliases: ['training type', 'sport', 'typ treningu', 'activity type'] },
+  { key: 'trainingIntensity', label: 'Intensywność treningu', kind: 'score', group: 'Aktywność', aliases: ['intensity', 'intensywnosc'] },
   { key: 'energy', label: 'Energia', kind: 'score', group: 'Samopoczucie', aliases: ['energy', 'energia'] },
   { key: 'stress', label: 'Stres', kind: 'score', group: 'Samopoczucie', aliases: ['stress', 'stres'] },
-  { key: 'irritability', label: 'Rozdraznienie', kind: 'score', group: 'Samopoczucie', aliases: ['irritability', 'rozdraznienie'] },
+  { key: 'irritability', label: 'Rozdrażnienie', kind: 'score', group: 'Samopoczucie', aliases: ['irritability', 'rozdraznienie'] },
   { key: 'recovery', label: 'Regeneracja', kind: 'score', group: 'Samopoczucie', aliases: ['recovery', 'regeneracja'] },
   { key: 'mood', label: 'Nastroj', kind: 'score', group: 'Samopoczucie', aliases: ['mood', 'nastroj'] },
-  { key: 'clarity', label: 'Jasnosc umyslu', kind: 'score', group: 'Samopoczucie', aliases: ['clarity', 'jasnosc'] },
+  { key: 'clarity', label: 'Jasność umyslu', kind: 'score', group: 'Samopoczucie', aliases: ['clarity', 'jasnosc'] },
   { key: 'caffeineShots', label: 'Kofeina (espresso)', kind: 'number', group: 'Styl zycia', aliases: ['caffeine', 'kofeina', 'espresso', 'kawa'] },
   { key: 'caffeineLastTime', label: 'Ostatnia kofeina (godzina)', kind: 'clock', group: 'Styl zycia', aliases: ['caffeine time', 'ostatnia kawa'] },
   { key: 'alcoholUnits', label: 'Alkohol', kind: 'number', group: 'Styl zycia', aliases: ['alcohol', 'alkohol'] },
@@ -154,7 +155,7 @@ export function suggestMapping(headers: string[]): Record<string, string> {
   const map: Record<string, string> = {}
   const used = new Set<string>()
   for (const header of headers) {
-    const h = header.toLowerCase().replace(/[_-]+/g, ' ')
+    const h = normalizeKey(header)
     let best: ImportField | null = null
     let bestScore = 0
     for (const field of IMPORT_FIELDS) {

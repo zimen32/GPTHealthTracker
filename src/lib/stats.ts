@@ -1,4 +1,4 @@
-/** Podstawowe statystyki opisowe. Wszystkie funkcje ignoruja wartosci brakujace. */
+/** Podstawowe statystyki opisowe. Wszystkie funkcje ignoruja wartości brakujace. */
 
 export function clean(values: Array<number | null | undefined>): number[] {
   return values.filter((v): v is number => typeof v === 'number' && Number.isFinite(v))
@@ -34,8 +34,8 @@ export function stdDev(values: Array<number | null | undefined>): number | null 
 }
 
 /**
- * Odchylenie od osobistej normy wyrazone w jednostkach rozrzutu (odporne na wartosci skrajne):
- * (wartosc - mediana) / (IQR / 1,349). Zwraca null, gdy rozrzut jest zerowy lub danych jest za malo.
+ * Odchylenie od osobistej normy wyrazone w jednostkach rozrzutu (odporne na wartości skrajne):
+ * (wartość - mediana) / (IQR / 1,349). Zwraca null, gdy rozrzut jest zerowy lub danych jest za malo.
  */
 export function robustZScore(value: number, baseline: Array<number | null | undefined>): number | null {
   const v = clean(baseline)
@@ -53,7 +53,7 @@ export function percentChange(from: number, to: number): number | null {
   return ((to - from) / Math.abs(from)) * 100
 }
 
-/** Srednia kroczaca; pozycje z mniejsza liczba danych niz `minPoints` zwracaja null. */
+/** Średnia kroczaca; pozycje z mniejsza liczba danych niż `minPoints` zwracaja null. */
 export function rollingMean(values: Array<number | null | undefined>, window: number, minPoints = 1): Array<number | null> {
   return values.map((_, i) => {
     const slice = values.slice(Math.max(0, i - window + 1), i + 1)
@@ -77,8 +77,8 @@ function ranks(values: number[]): number[] {
 }
 
 /**
- * Korelacja rangowa Spearmana - odporna na nieliniowosc i na skale porzadkowe 1-10,
- * dlatego uzywana zamiast Pearsona dla ocen subiektywnych.
+ * Korelacja rangowa Spearmana - odporna na nieliniowość i na skale porzadkowe 1-10,
+ * dlatego używana zamiast Pearsona dla ocen subiektywnych.
  */
 export function spearman(xs: number[], ys: number[]): number | null {
   if (xs.length !== ys.length || xs.length < 3) return null

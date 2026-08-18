@@ -14,7 +14,7 @@ export interface CompletenessReport {
   totalDays: number
   daysWithAnyData: number
   fields: FieldCompleteness[]
-  /** Daty bez zadnego wpisu w analizowanym okresie. */
+  /** Daty bez żadnego wpisu w analizowanym okresie. */
   emptyDates: IsoDate[]
 }
 
@@ -49,7 +49,7 @@ export interface StaleItem {
   daysAgo: number | null
 }
 
-/** Parametry laboratoryjne bez wyniku lub z wynikiem starszym niz `staleAfterDays`. */
+/** Parametry laboratoryjne bez wyniku lub z wynikiem starszym niż `staleAfterDays`. */
 export function staleLabTests(
   tests: LabTest[],
   results: LabResult[],
@@ -70,7 +70,7 @@ export function staleLabTests(
     .filter((i) => i.lastDate === null || (i.daysAgo ?? 0) > staleAfterDays)
 }
 
-/** Pomiary okresowe, ktorych termin minal wzgledem ustawionej czestotliwosci. */
+/** Pomiary okresowe, których termin minął względem ustawionej częstotliwości. */
 export function dueMeasurements(
   schedules: Array<{ type: string; intervalDays: number; enabled: boolean }>,
   measurements: Measurement[],

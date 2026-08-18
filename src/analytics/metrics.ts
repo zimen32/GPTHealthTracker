@@ -2,17 +2,17 @@ import type { DailyEntry } from '../domain/types'
 import { formatMinutes } from '../lib/date'
 import { fmt } from '../lib/stats'
 
-export type MetricGroup = 'regeneracja' | 'samopoczucie' | 'aktywnosc' | 'styl_zycia'
+export type MetricGroup = 'regeneracja' | 'samopoczucie' | 'aktywność' | 'styl_zycia'
 
 export interface MetricDef {
   key: string
   label: string
   group: MetricGroup
   unit: string
-  /** Odczyt wartosci z wpisu dziennego; null = brak danych. */
+  /** Odczyt wartości z wpisu dziennego; null = brak danych. */
   get: (e: DailyEntry) => number | null
   format: (v: number | null) => string
-  /** Kierunek, w ktorym wzrost wartosci jest zwykle korzystny - tylko do opisu strzalki, nie do ocen. */
+  /** Kierunek, w ktorym wzrost wartości jest zwykle korzystny - tylko do opisu strzalki, nie do ocen. */
   higherIsBetter?: boolean
   digits?: number
 }
@@ -27,7 +27,7 @@ export const METRICS: MetricDef[] = [
   // regeneracja
   {
     key: 'totalSleepMinutes',
-    label: 'Dlugosc snu',
+    label: 'Długość snu',
     group: 'regeneracja',
     unit: 'min',
     get: (e) => num(e.totalSleepMinutes),
@@ -45,7 +45,7 @@ export const METRICS: MetricDef[] = [
   },
   {
     key: 'deepSleepMinutes',
-    label: 'Sen gleboki',
+    label: 'Sen głęboki',
     group: 'regeneracja',
     unit: 'min',
     get: (e) => num(e.deepSleepMinutes),
@@ -98,7 +98,7 @@ export const METRICS: MetricDef[] = [
   },
   {
     key: 'restingHeartRate',
-    label: 'Tetno spoczynkowe',
+    label: 'Tętno spoczynkowe',
     group: 'regeneracja',
     unit: 'bpm',
     get: (e) => num(e.restingHeartRate),
@@ -117,15 +117,15 @@ export const METRICS: MetricDef[] = [
   // samopoczucie
   scoreMetric('energy', 'Energia', true, (e) => num(e.energy)),
   scoreMetric('stress', 'Stres', false, (e) => num(e.stress)),
-  scoreMetric('irritability', 'Rozdraznienie', false, (e) => num(e.irritability)),
+  scoreMetric('irritability', 'Rozdrażnienie', false, (e) => num(e.irritability)),
   scoreMetric('recovery', 'Regeneracja (odczuwana)', true, (e) => num(e.recovery)),
-  scoreMetric('mood', 'Nastroj', true, (e) => num(e.mood)),
-  scoreMetric('clarity', 'Jasnosc umyslu', true, (e) => num(e.clarity)),
-  // aktywnosc
+  scoreMetric('mood', 'Nastrój', true, (e) => num(e.mood)),
+  scoreMetric('clarity', 'Jasność umysłu', true, (e) => num(e.clarity)),
+  // aktywność
   {
     key: 'steps',
     label: 'Kroki',
-    group: 'aktywnosc',
+    group: 'aktywność',
     unit: 'kroki',
     get: (e) => num(e.steps),
     format: (v) => (v == null ? '-' : fmt(v, 0)),
@@ -134,7 +134,7 @@ export const METRICS: MetricDef[] = [
   {
     key: 'trainingMinutes',
     label: 'Czas treningu',
-    group: 'aktywnosc',
+    group: 'aktywność',
     unit: 'min',
     get: (e) => num(e.trainingMinutes),
     format: (v) => formatMinutes(v),
@@ -143,7 +143,7 @@ export const METRICS: MetricDef[] = [
   {
     key: 'walkingMinutes',
     label: 'Czas chodzenia',
-    group: 'aktywnosc',
+    group: 'aktywność',
     unit: 'min',
     get: (e) => num(e.walkingMinutes),
     format: (v) => formatMinutes(v),

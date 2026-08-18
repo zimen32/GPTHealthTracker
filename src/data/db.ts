@@ -13,7 +13,7 @@ import {
 } from '../domain/types'
 
 /**
- * Lokalna baza aplikacji (IndexedDB). Zadne dane nie opuszczaja urzadzenia.
+ * Lokalna baza aplikacji (IndexedDB). Zadne dane nie opuszczaja urządzenia.
  * Migracje: dodawaj nowe `version(n)` - nigdy nie usuwaj ani nie zmieniaj istniejacych.
  */
 export class HealthDb extends Dexie {
@@ -43,7 +43,7 @@ export class HealthDb extends Dexie {
 
 export const db = new HealthDb()
 
-/** Wypelnia katalog badan, harmonogramy i ustawienia, jesli baza jest swiezo utworzona. */
+/** Wypełnia katalog badań, harmonogramy i ustawienia, jesli baza jest swiezo utworzona. */
 export async function seedIfEmpty(database: HealthDb = db): Promise<void> {
   if ((await database.labTests.count()) === 0) await database.labTests.bulkPut(LAB_CATALOG)
   if ((await database.schedules.count()) === 0) await database.schedules.bulkPut(DEFAULT_SCHEDULES)

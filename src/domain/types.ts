@@ -2,10 +2,10 @@
  * Model danych aplikacji.
  *
  * Zasady obowiazujace w calym module:
- * - kazde pole pomiarowe jest opcjonalne; pominiecie pola to normalny stan, nie blad,
- * - wartosci liczbowe i jednostki sa przechowywane osobno,
- * - godziny sa zapisywane jako lokalny czas zegarowy 'HH:mm' (opis w docs/PRIVACY.md),
- * - nic nie jest nadpisywane bezsladowo: kazda zmiana trafia do tabeli `revisions`.
+ * - każde pole pomiarowe jest opcjonalne; pominiecie pola to normalny stan, nie błąd,
+ * - wartości liczbowe i jednostki są przechowywane osobno,
+ * - godziny są zapisywane jako lokalny czas zegarowy 'HH:mm' (opis w docs/PRIVACY.md),
+ * - nic nie jest nadpisywane bezśladowo: każda zmiana trafia do tabeli `revisions`.
  */
 
 export type IsoDate = string // 'YYYY-MM-DD'
@@ -18,7 +18,7 @@ export type DataSource = 'manual' | 'import'
 export type Score = number
 
 export interface DailyEntry {
-  /** Klucz glowny = data dnia (dla snu: dzien wybudzenia). */
+  /** Klucz główny = data dnia (dla snu: dzień wybudzenia). */
   date: IsoDate
 
   // --- samopoczucie (skale 1-10) ---
@@ -43,10 +43,10 @@ export interface DailyEntry {
   restingHeartRate?: number | null
   hrv?: number | null
   spo2?: number | null
-  /** Skad pochodza dane o snie dla tego dnia. */
+  /** Skad pochodzą dane o snie dla tego dnia. */
   sleepSource?: 'manual' | 'huawei' | 'import' | null
 
-  // --- aktywnosc ---
+  // --- aktywność ---
   steps?: number | null
   walkingMinutes?: number | null
   sedentaryMinutes?: number | null
@@ -56,7 +56,7 @@ export interface DailyEntry {
   trainingIntensity?: Score | null
 
   // --- styl zycia ---
-  /** Liczba porcji espresso (kazda kawa jest wielokrotnoscia espresso). */
+  /** Liczba porcji espresso (każda kawa jest wielokrotnością espresso). */
   caffeineShots?: number | null
   caffeineLastTime?: ClockTime | null
   alcoholUnits?: number | null
@@ -67,7 +67,7 @@ export interface DailyEntry {
 
   createdAt?: IsoTimestamp
   updatedAt?: IsoTimestamp
-  /** true, jesli wpis byl edytowany po pierwszym zapisie (szczegoly w `revisions`). */
+  /** true, jesli wpis byl edytowany po pierwszym zapisie (szczegóły w `revisions`). */
   edited?: boolean
 }
 
@@ -86,9 +86,9 @@ export interface Measurement {
   date: IsoDate
   measuredAt?: IsoTimestamp | null
   type: MeasurementType | string
-  /** Dla cisnienia: wartosc skurczowa. */
+  /** Dla ciśnienia: wartość skurczowa. */
   value: number
-  /** Dla cisnienia: wartosc rozkurczowa. */
+  /** Dla ciśnienia: wartość rozkurczowa. */
   value2?: number | null
   unit: string
   source: DataSource
@@ -122,7 +122,7 @@ export interface LabTest {
   name: string
   category: LabCategory
   defaultUnit: string
-  /** true dla parametrow opisowych (np. badanie ogolne moczu). */
+  /** true dla parametrów opisowych (np. badanie ogólne moczu). */
   textual?: boolean
   isCustom?: boolean
   sortOrder?: number
@@ -132,9 +132,9 @@ export interface LabResult {
   id?: number
   testKey: string
   date: IsoDate
-  /** Wartosc liczbowa; null tylko dla parametrow opisowych. */
+  /** Wartość liczbowa; null tylko dla parametrów opisowych. */
   value?: number | null
-  /** Wynik opisowy (np. tresc badania ogolnego moczu). */
+  /** Wynik opisowy (np. treść badania ogolnego moczu). */
   valueText?: string | null
   /** Snapshot jednostki - nie referencja do katalogu. */
   unit: string
@@ -177,13 +177,13 @@ export interface ImportMapping {
 
 export interface Settings {
   id: 'app'
-  /** Domyslnie 63 mg kofeiny na porcje espresso; sluzy tylko do raportowania. */
+  /** Domyślnie 63 mg kofeiny na porcje espresso; służy tylko do raportowania. */
   mgPerEspresso: number
   /** Metryki subiektywne widoczne od razu w Daily Check-in. */
   visibleScores: Array<'energy' | 'stress' | 'irritability' | 'recovery' | 'mood' | 'clarity'>
   reminderEnabled: boolean
   reminderTime: ClockTime
-  /** Prog krotkiego snu (minuty) uzywany w porownaniach warunkowych. */
+  /** Próg krótkiego snu (minuty) używany w porownaniach warunkowych. */
   shortSleepMinutes: number
   lastBackupAt?: IsoTimestamp | null
   aiExportWarningDismissed?: boolean

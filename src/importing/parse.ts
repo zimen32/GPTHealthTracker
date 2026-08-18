@@ -1,4 +1,4 @@
-/** Parsery plikow wejsciowych. Zadny plik nie opuszcza urzadzenia - wszystko dzieje sie lokalnie. */
+/** Parsery plików wejsciowych. Zadny plik nie opuszcza urządzenia - wszystko dzieje się lokalnie. */
 
 export interface ParsedTable {
   headers: string[]
@@ -67,8 +67,8 @@ export function parseDelimited(text: string, delimiter = detectDelimiter(text)):
 }
 
 /**
- * Splaszcza JSON do tabeli wierszy. Obsluguje tablice obiektow oraz obiekt,
- * ktorego jedna z wartosci jest tablica obiektow (typowy uklad eksportow z aplikacji zdrowotnych).
+ * Spłaszcza JSON do tabeli wierszy. Obsluguje tablice obiektow oraz obiekt,
+ * ktorego jedna z wartości jest tablica obiektow (typowy uklad eksportow z aplikacji zdrowotnych).
  */
 export function flattenJson(data: unknown): ParsedTable {
   const array = findArray(data)

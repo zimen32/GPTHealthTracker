@@ -5,36 +5,36 @@ import { METRIC_BY_KEY, type MetricDef } from './metrics'
 
 /** Minimum dni wspolnych obserwacji, zeby cokolwiek pokazac. */
 export const MIN_DAYS_FOR_CORRELATION = 14
-/** Ponizej tego progu zaleznosc jest oznaczana jako wstepna. */
+/** Poniżej tego progu zależność jest oznaczana jako wstepna. */
 export const PREFERRED_DAYS_FOR_CORRELATION = 30
 
-export const CORRELATION_DISCLAIMER = 'Korelacja nie oznacza przyczynowosci.'
+export const CORRELATION_DISCLAIMER = 'Korelacja nie oznacza przyczynowości.'
 
-export type CorrelationStrength = 'brak' | 'slaba' | 'umiarkowana' | 'wyrazna'
+export type CorrelationStrength = 'brak' | 'słaba' | 'umiarkowana' | 'wyraźna'
 
 export interface CorrelationPairDef {
   id: string
   xKey: string
   yKey: string
-  /** true = metryka Y jest brana z dnia nastepnego (np. sen w nocy -> energia nastepnego dnia). */
+  /** true = metryka Y jest brana z dnia następnego (np. sen w nocy -> energia następnego dnia). */
   nextDay: boolean
   label: string
 }
 
-/** Pary analizowane w aplikacji - swiadomie ograniczona lista, zeby nie mnozyc przypadkowych zaleznosci. */
+/** Pary analizowane w aplikacji - świadomie ograniczona lista, zeby nie mnozyc przypadkowych zależności. */
 export const CORRELATION_PAIRS: CorrelationPairDef[] = [
-  { id: 'sleep_energy', xKey: 'totalSleepMinutes', yKey: 'energy', nextDay: false, label: 'Dlugosc snu a energia' },
-  { id: 'sleep_irritability', xKey: 'totalSleepMinutes', yKey: 'irritability', nextDay: false, label: 'Dlugosc snu a rozdraznienie' },
-  { id: 'sleep_clarity', xKey: 'totalSleepMinutes', yKey: 'clarity', nextDay: false, label: 'Dlugosc snu a jasnosc umyslu' },
+  { id: 'sleep_energy', xKey: 'totalSleepMinutes', yKey: 'energy', nextDay: false, label: 'Długość snu a energia' },
+  { id: 'sleep_irritability', xKey: 'totalSleepMinutes', yKey: 'irritability', nextDay: false, label: 'Długość snu a rozdrażnienie' },
+  { id: 'sleep_clarity', xKey: 'totalSleepMinutes', yKey: 'clarity', nextDay: false, label: 'Długość snu a jasność umysłu' },
   { id: 'hrv_stress', xKey: 'hrv', yKey: 'stress', nextDay: false, label: 'HRV a stres' },
-  { id: 'rhr_recovery', xKey: 'restingHeartRate', yKey: 'recovery', nextDay: false, label: 'Tetno spoczynkowe a regeneracja' },
-  { id: 'caffeine_sleep', xKey: 'caffeineShots', yKey: 'totalSleepMinutes', nextDay: true, label: 'Kofeina a sen nastepnej nocy' },
-  { id: 'alcohol_sleep', xKey: 'alcoholUnits', yKey: 'totalSleepMinutes', nextDay: true, label: 'Alkohol a sen nastepnej nocy' },
-  { id: 'alcohol_hrv', xKey: 'alcoholUnits', yKey: 'hrv', nextDay: true, label: 'Alkohol a HRV nastepnej nocy' },
-  { id: 'training_mood', xKey: 'trainingMinutes', yKey: 'mood', nextDay: true, label: 'Trening a nastroj nastepnego dnia' },
-  { id: 'training_energy', xKey: 'trainingMinutes', yKey: 'energy', nextDay: true, label: 'Trening a energia nastepnego dnia' },
+  { id: 'rhr_recovery', xKey: 'restingHeartRate', yKey: 'recovery', nextDay: false, label: 'Tętno spoczynkowe a regeneracja' },
+  { id: 'caffeine_sleep', xKey: 'caffeineShots', yKey: 'totalSleepMinutes', nextDay: true, label: 'Kofeina a sen następnej nocy' },
+  { id: 'alcohol_sleep', xKey: 'alcoholUnits', yKey: 'totalSleepMinutes', nextDay: true, label: 'Alkohol a sen następnej nocy' },
+  { id: 'alcohol_hrv', xKey: 'alcoholUnits', yKey: 'hrv', nextDay: true, label: 'Alkohol a HRV następnej nocy' },
+  { id: 'training_mood', xKey: 'trainingMinutes', yKey: 'mood', nextDay: true, label: 'Trening a nastrój następnego dnia' },
+  { id: 'training_energy', xKey: 'trainingMinutes', yKey: 'energy', nextDay: true, label: 'Trening a energia następnego dnia' },
   { id: 'steps_energy', xKey: 'steps', yKey: 'energy', nextDay: false, label: 'Kroki a energia' },
-  { id: 'sleep_recovery', xKey: 'totalSleepMinutes', yKey: 'recovery', nextDay: false, label: 'Dlugosc snu a odczuwana regeneracja' },
+  { id: 'sleep_recovery', xKey: 'totalSleepMinutes', yKey: 'recovery', nextDay: false, label: 'Długość snu a odczuwana regeneracja' },
 ]
 
 export interface CorrelationResult {
@@ -49,7 +49,7 @@ export interface CorrelationResult {
   direction: 'dodatnia' | 'ujemna' | null
   /** true, gdy danych jest wystarczajaco duzo, zeby pokazac wynik uzytkownikowi. */
   hasEnoughData: boolean
-  /** true, gdy n < PREFERRED_DAYS_FOR_CORRELATION - wynik wstepny. */
+  /** true, gdy n < PREFERRED_DAYS_FOR_CORRELATION - wynik wstępny. */
   preliminary: boolean
 }
 
@@ -57,12 +57,12 @@ export function correlationStrength(rho: number | null): CorrelationStrength {
   if (rho == null) return 'brak'
   const a = Math.abs(rho)
   if (a < 0.2) return 'brak'
-  if (a < 0.4) return 'slaba'
+  if (a < 0.4) return 'słaba'
   if (a < 0.6) return 'umiarkowana'
-  return 'wyrazna'
+  return 'wyraźna'
 }
 
-/** Zbiera pary (x z dnia D, y z dnia D lub D+1) dla dni, w ktorych obie wartosci istnieja. */
+/** Zbiera pary (x z dnia D, y z dnia D lub D+1) dla dni, w których obie wartości istnieja. */
 export function pairedValues(
   entries: DailyEntry[],
   xKey: string,
@@ -107,7 +107,7 @@ export function computeCorrelation(entries: DailyEntry[], pair: CorrelationPairD
   }
 }
 
-/** Wszystkie pary; wyniki bez wystarczajacej liczby danych sa zwracane z hasEnoughData = false. */
+/** Wszystkie pary; wyniki bez wystarczajacej liczby danych są zwracane z hasEnoughData = false. */
 export function computeAllCorrelations(entries: DailyEntry[]): CorrelationResult[] {
   return CORRELATION_PAIRS.map((p) => computeCorrelation(entries, p)).sort((a, b) => {
     if (a.hasEnoughData !== b.hasEnoughData) return a.hasEnoughData ? -1 : 1

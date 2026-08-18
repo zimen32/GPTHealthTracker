@@ -10,7 +10,7 @@ import { buildMarkdownReport } from './markdown'
 function dataset(overrides: Partial<ExportDataset> = {}): ExportDataset {
   const entries: DailyEntry[] = Array.from({ length: 60 }, (_, i) => ({
     date: addDays('2026-06-20', i),
-    // druga polowa okresu: krotszy sen, nizsze HRV, wyzszy stres
+    // druga polowa okresu: krótszy sen, niższe HRV, wyższy stres
     totalSleepMinutes: i < 30 ? 425 : 392,
     deepSleepMinutes: i < 30 ? 62 : 54,
     remSleepMinutes: 70,
@@ -29,9 +29,9 @@ function dataset(overrides: Partial<ExportDataset> = {}): ExportDataset {
     waterMl: 1900,
     trainingDone: i % 5 === 0,
     trainingMinutes: i % 5 === 0 ? 45 : null,
-    trainingType: i % 5 === 0 ? 'silowy' : null,
+    trainingType: i % 5 === 0 ? 'siłowy' : null,
     sleepSource: i % 2 === 0 ? 'huawei' : 'manual',
-    notes: i === 59 ? 'ciezki tydzien w pracy' : null,
+    notes: i === 59 ? 'ciężki tydzien w pracy' : null,
   }))
 
   const measurements: Measurement[] = [
@@ -47,7 +47,7 @@ function dataset(overrides: Partial<ExportDataset> = {}): ExportDataset {
   ]
 
   return {
-    // raport dotyczy ostatnich 30 dni; poprzednie 30 dni sluzy tylko do porownania
+    // raport dotyczy ostatnich 30 dni; poprzednie 30 dni służy tylko do porównania
     from: '2026-07-20',
     to: '2026-08-18',
     days: 30,
@@ -68,7 +68,7 @@ function dataset(overrides: Partial<ExportDataset> = {}): ExportDataset {
 describe('raport Markdown dla AI', () => {
   const report = buildMarkdownReport(dataset())
 
-  it('zawiera wszystkie wymagane sekcje w ustalonej kolejnosci', () => {
+  it('zawiera wszystkie wymagane sekcje w ustalonej kolejności', () => {
     const required = [
       '# Health Tracking Report',
       '## Period',
@@ -91,7 +91,7 @@ describe('raport Markdown dla AI', () => {
     }
   })
 
-  it('nie uzywa jezyka diagnostycznego ani zalecen', () => {
+  it('nie uzywa jezyka diagnostycznego ani zaleceń', () => {
     const forbidden = [
       'objawy',
       'diagnoz',
@@ -103,11 +103,11 @@ describe('raport Markdown dla AI', () => {
       'leczenie',
       'chorob',
       'zespol wypalenia',
-      'przeciazenie organizmu',
+      'przeciążenie organizmu',
     ]
     const lower = report.toLowerCase()
     for (const phrase of forbidden) {
-      // "choroba" dozwolona wylacznie jako neutralna etykieta pola dziennika
+      // "choroba" dozwolona wyłącznie jako neutralna etykieta pola dziennika
       if (phrase === 'chorob') {
         const occurrences = lower.split('chorob').length - 1
         expect(occurrences, 'slowo "chorob..." poza etykieta pola').toBe(1)
@@ -118,34 +118,34 @@ describe('raport Markdown dla AI', () => {
     }
   })
 
-  it('opisuje zmiane sredniego snu wzgledem poprzedniego okresu wraz z liczba dni danych', () => {
-    expect(report).toContain('Dlugosc snu: 6 h 32 min')
-    expect(report).toMatch(/Dlugosc snu: srednia 6 h 32 min wobec 7 h 05 min/)
+  it('opisuje zmianę średniego snu względem poprzedniego okresu wraz z liczba dni danych', () => {
+    expect(report).toContain('Długość snu: 6 h 32 min')
+    expect(report).toMatch(/Długość snu: średnia 6 h 32 min wobec 7 h 05 min/)
     expect(report).toContain('dni z danymi: 30/30')
   })
 
-  it('pokazuje wyniki badan z jednostka, zakresem laboratorium i zmiana wobec poprzedniego wyniku', () => {
+  it('pokazuje wyniki badań z jednostka, zakresem laboratorium i zmiana wobec poprzedniego wyniku', () => {
     expect(report).toContain('| Date | Test | Value | Unit | Reference | Lab | Fasting | Change vs previous |')
     expect(report).toContain('| 2026-07-14 | Ferrytyna | 38 | ng/ml | 30-400 | Lab X | tak |')
     expect(report).toContain('-23 vs 61 (03.02.2026)')
   })
 
-  it('dolacza zastrzezenie o braku przyczynowosci przy korelacjach', () => {
-    expect(report).toContain('Korelacja nie oznacza przyczynowosci.')
+  it('dolacza zastrzeżenie o braku przyczynowości przy korelacjach', () => {
+    expect(report).toContain('Korelacja nie oznacza przyczynowości.')
   })
 
-  it('wymienia braki danych zamiast je pomijac', () => {
+  it('wymienia braki danych zamiast je pomijać', () => {
     expect(report).toContain('## Missing data')
     expect(report).toContain('Dni z jakimikolwiek danymi: 30/30')
-    expect(report).toContain('Badania bez zadnego wyniku')
+    expect(report).toContain('Badania bez żadnego wyniku')
   })
 
   it('dolacza notatki dzienne w zalaczniku', () => {
     expect(report).toContain('## Appendix - daily notes')
-    expect(report).toContain('ciezki tydzien w pracy')
+    expect(report).toContain('ciężki tydzien w pracy')
   })
 
-  it('nie pokazuje korelacji, gdy danych jest mniej niz 14 dni', () => {
+  it('nie pokazuje korelacji, gdy danych jest mniej niż 14 dni', () => {
     const short = dataset({
       entries: Array.from({ length: 10 }, (_, i) => ({ date: addDays('2026-08-09', i), totalSleepMinutes: 400, energy: 5 })),
       entriesWithHistory: Array.from({ length: 10 }, (_, i) => ({ date: addDays('2026-08-09', i), totalSleepMinutes: 400, energy: 5 })),
@@ -154,17 +154,17 @@ describe('raport Markdown dla AI', () => {
       days: 10,
     })
     const md = buildMarkdownReport(short)
-    expect(md).toContain('Brak zaleznosci z wystarczajaca liczba danych')
+    expect(md).toContain('Brak zależności z wystarczajaca liczba danych')
     expect(md).not.toContain('Spearman rho')
   })
 
-  it('dziala na pustym zbiorze danych bez wyjatkow', () => {
+  it('działa na pustym zbiorze danych bez wyjatkow', () => {
     const empty = dataset({ entries: [], entriesWithHistory: [], measurements: [], labResults: [], previousLabResults: [] })
     const md = buildMarkdownReport(empty)
     expect(md).toContain('# Health Tracking Report')
     expect(md).toContain('brak danych')
-    expect(md).toContain('brak pomiarow w okresie')
-    expect(md).toContain('Brak wynikow badan w wybranym okresie.')
+    expect(md).toContain('brak pomiarów w okresie')
+    expect(md).toContain('Brak wyników badań w wybranym okresie.')
   })
 })
 
@@ -182,7 +182,7 @@ describe('eksport JSON', () => {
     expect(ferritin).toMatchObject({ value: 38, unit: 'ng/ml', ref_min: 30, ref_max: 400, laboratory: 'Lab X' })
   })
 
-  it('dolacza wyliczenia pochodne i kompletnosc danych', () => {
+  it('dolacza wyliczenia pochodne i kompletność danych', () => {
     expect(json.derived.trends.length).toBeGreaterThan(0)
     expect(json.derived.correlations.every((c: any) => c.n >= 14)).toBe(true)
     expect(json.completeness.days_with_any_data).toBe(30)

@@ -34,7 +34,7 @@ export function dateRange(from: IsoDate, to: IsoDate): IsoDate[] {
   return out
 }
 
-/** Ostatnie `days` dni koniczace sie na `end` (wlacznie). */
+/** Ostatnie `days` dni koniczace się na `end` (wlacznie). */
 export function lastNDays(days: number, end: IsoDate = today()): IsoDate[] {
   return dateRange(addDays(end, -(days - 1)), end)
 }
@@ -50,8 +50,8 @@ export function minutesToClock(min: number): ClockTime {
 }
 
 /**
- * Dlugosc snu z godziny zasniecia i wybudzenia (czas zegarowy, przejscie przez polnoc).
- * Uwaga: liczymy na czasie lokalnym - w noc zmiany czasu wynik moze roznic sie o 60 min.
+ * Długość snu z godziny zasniecia i wybudzenia (czas zegarowy, przejscie przez polnoc).
+ * Uwaga: liczymy na czasie lokalnym - w noc zmiany czasu wynik może roznic się o 60 min.
  */
 export function sleepDurationMinutes(sleepStart: ClockTime, wakeTime: ClockTime): number {
   const s = clockToMinutes(sleepStart)

@@ -18,14 +18,14 @@ describe('statystyki', () => {
     expect(median([])).toBeNull()
   })
 
-  it('ignoruje brakujace wartosci w sredniej kroczacej i wymaga minimum punktow', () => {
+  it('ignoruje brakujace wartości w średniej kroczacej i wymaga minimum punktow', () => {
     const r = rollingMean([1, null, 3, 5, 7], 3, 2)
     expect(r[0]).toBeNull()
     expect(r[2]).toBe(2)
     expect(r[4]).toBe(5)
   })
 
-  it('zwraca korelacje rangowa Spearmana odporna na nieliniowosc', () => {
+  it('zwraca korelacje rangowa Spearmana odporna na nieliniowość', () => {
     expect(spearman([1, 2, 3, 4], [1, 4, 9, 16])).toBe(1)
     expect(spearman([1, 2, 3, 4], [16, 9, 4, 1])).toBe(-1)
     expect(spearman([1, 1, 1, 1], [1, 2, 3, 4])).toBeNull()
@@ -45,7 +45,7 @@ describe('podsumowanie metryki', () => {
     ...buildDays('2026-07-01', 30, () => ({ totalSleepMinutes: 392 })), // okres biezacy: 6 h 32 min
   ]
 
-  it('porownuje okres biezacy z poprzednim okresem tej samej dlugosci', () => {
+  it('porownuje okres biezacy z poprzednim okresem tej samej długości', () => {
     const s = summarizeMetric(entries, 'totalSleepMinutes', '2026-07-01', '2026-07-30')!
     expect(s.n).toBe(30)
     expect(s.mean).toBe(392)
@@ -54,7 +54,7 @@ describe('podsumowanie metryki', () => {
     expect(s.changePercent).toBeCloseTo(-7.76, 1)
   })
 
-  it('podaje liczbe dni z danymi osobno od dlugosci okresu', () => {
+  it('podaje liczbę dni z danymi osobno od długości okresu', () => {
     const sparse = buildDays('2026-07-01', 30, (i) => (i % 3 === 0 ? { energy: 5 } : {}))
     const s = summarizeMetric(sparse, 'energy', '2026-07-01', '2026-07-30')!
     expect(s.days).toBe(30)
@@ -81,8 +81,8 @@ describe('szereg czasowy', () => {
   })
 })
 
-describe('porownania warunkowe', () => {
-  it('porownuje rozdraznienie w dniach z krotkim i dluzszym snem', () => {
+describe('porównania warunkowe', () => {
+  it('porownuje rozdrażnienie w dniach z krótkim i dluzszym snem', () => {
     const entries = [
       ...buildDays('2026-07-01', 10, () => ({ totalSleepMinutes: 360, irritability: 7 })),
       ...buildDays('2026-07-11', 10, () => ({ totalSleepMinutes: 430, irritability: 4 })),
@@ -98,7 +98,7 @@ describe('porownania warunkowe', () => {
 describe('korelacje', () => {
   const pair = { id: 'sleep_energy', xKey: 'totalSleepMinutes', yKey: 'energy', nextDay: false, label: 'Sen a energia' }
 
-  it('nie pokazuje korelacji przy mniej niz 14 dniach danych', () => {
+  it('nie pokazuje korelacji przy mniej niż 14 dniach danych', () => {
     const entries = buildDays('2026-07-01', MIN_DAYS_FOR_CORRELATION - 1, (i) => ({
       totalSleepMinutes: 360 + i * 5,
       energy: 3 + i * 0.2,
@@ -108,7 +108,7 @@ describe('korelacje', () => {
     expect(r.rho).toBeNull()
   })
 
-  it('pokazuje korelacje od 14 dni i oznacza wynik jako wstepny ponizej 30 dni', () => {
+  it('pokazuje korelacje od 14 dni i oznacza wynik jako wstępny poniżej 30 dni', () => {
     const entries = buildDays('2026-07-01', 20, (i) => ({ totalSleepMinutes: 360 + i * 5, energy: 3 + i * 0.2 }))
     const r = computeCorrelation(entries, pair)
     expect(r.hasEnoughData).toBe(true)
@@ -117,7 +117,7 @@ describe('korelacje', () => {
     expect(r.preliminary).toBe(true)
   })
 
-  it('liczy pary z przesunieciem o jeden dzien, gdy skutek dotyczy dnia nastepnego', () => {
+  it('liczy pary z przesunieciem o jeden dzień, gdy skutek dotyczy dnia następnego', () => {
     const entries = [
       { date: '2026-07-01', caffeineShots: 4 },
       { date: '2026-07-02', totalSleepMinutes: 360, caffeineShots: 1 },
@@ -133,16 +133,16 @@ describe('korelacje', () => {
     expect(r.n).toBe(2)
   })
 
-  it('opisuje sile zaleznosci bez jezyka przyczynowego', () => {
+  it('opisuje sile zależności bez jezyka przyczynowego', () => {
     expect(correlationStrength(0.1)).toBe('brak')
-    expect(correlationStrength(-0.35)).toBe('slaba')
+    expect(correlationStrength(-0.35)).toBe('słaba')
     expect(correlationStrength(0.5)).toBe('umiarkowana')
-    expect(correlationStrength(-0.8)).toBe('wyrazna')
+    expect(correlationStrength(-0.8)).toBe('wyraźna')
   })
 })
 
-describe('kompletnosc danych', () => {
-  it('raportuje liczbe dni z danymi i luki w okresie', () => {
+describe('kompletność danych', () => {
+  it('raportuje liczbę dni z danymi i luki w okresie', () => {
     const entries: DailyEntry[] = [
       { date: '2026-08-01', energy: 5, steps: 4000 },
       { date: '2026-08-03', energy: 6 },
@@ -156,7 +156,7 @@ describe('kompletnosc danych', () => {
     expect(steps.missingDays).toBe(3)
   })
 
-  it('wskazuje badania bez wyniku lub z wynikiem starszym niz prog', () => {
+  it('wskazuje badania bez wyniku lub z wynikiem starszym niż próg', () => {
     const tests = [
       { key: 'ferritin', name: 'Ferrytyna', category: 'iron' as const, defaultUnit: 'ng/ml' },
       { key: 'tsh', name: 'TSH', category: 'thyroid' as const, defaultUnit: 'mIU/l' },
@@ -171,7 +171,7 @@ describe('kompletnosc danych', () => {
     expect(stale[1].lastDate).toBeNull()
   })
 
-  it('wyznacza pomiary, ktorych termin minal', () => {
+  it('wyznacza pomiary, których termin minął', () => {
     const schedules = [
       { type: 'body_weight', intervalDays: 7, enabled: true },
       { type: 'waist', intervalDays: 30, enabled: true },

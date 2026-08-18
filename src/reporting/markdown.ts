@@ -9,10 +9,10 @@ import { fmt, fmtPercent, mean, round } from '../lib/stats'
 import type { ExportDataset } from './dataset'
 
 /**
- * Raport tekstowy do wklejenia zewnetrznemu asystentowi AI.
+ * Raport tekstowy do wklejenia zewnętrznemu asystentowi AI.
  *
- * Zasada jezykowa (pilnowana testem): opisujemy wylacznie to, co pokazuja dane -
- * bez rozpoznan, bez ocen stanu zdrowia i bez zalecen.
+ * Zasada jezykowa (pilnowana testem): opisujemy wyłącznie to, co pokazuja dane -
+ * bez rozpoznan, bez ocen stanu zdrowia i bez zaleceń.
  */
 
 const SLEEP_METRICS = ['totalSleepMinutes', 'deepSleepMinutes', 'remSleepMinutes', 'lightSleepMinutes', 'awakeMinutes', 'sleepScore', 'hrv', 'restingHeartRate', 'awakenings']
@@ -57,11 +57,11 @@ function bodySection(d: ExportDataset): string[] {
     const delta = round(last.value - first.value, 1)
     out.push(
       line(
-        'Masa ciala',
-        `${fmt(last.value, 1)} ${last.unit} (${formatDatePl(last.date)}); zmiana w okresie: ${delta != null && delta > 0 ? '+' : ''}${fmt(delta, 1)} ${last.unit}; pomiarow: ${weight.length}`,
+        'Masa ciała',
+        `${fmt(last.value, 1)} ${last.unit} (${formatDatePl(last.date)}); zmiana w okresie: ${delta != null && delta > 0 ? '+' : ''}${fmt(delta, 1)} ${last.unit}; pomiarów: ${weight.length}`,
       ),
     )
-  } else out.push(line('Masa ciala', 'brak pomiarow w okresie'))
+  } else out.push(line('Masa ciała', 'brak pomiarów w okresie'))
 
   for (const type of ['waist', 'chest', 'arm', 'thigh', 'calf'] as MeasurementType[]) {
     const m = latestMeasurement(d.measurements, type)
@@ -75,19 +75,19 @@ function bodySection(d: ExportDataset): string[] {
     const avgDia = mean(bpRows.map((m) => m.value2 ?? null))
     out.push(
       line(
-        'Cisnienie krwi',
-        `ostatni pomiar ${fmt(bp.value, 0)}/${fmt(bp.value2, 0)} mmHg (${formatDatePl(bp.date)}); srednia z okresu: ${fmt(avgSys, 0)}/${fmt(avgDia, 0)} mmHg z ${bpRows.length} pomiarow`,
+        'Ciśnienie krwi',
+        `ostatni pomiar ${fmt(bp.value, 0)}/${fmt(bp.value2, 0)} mmHg (${formatDatePl(bp.date)}); średnia z okresu: ${fmt(avgSys, 0)}/${fmt(avgDia, 0)} mmHg z ${bpRows.length} pomiarów`,
       ),
     )
-  } else out.push(line('Cisnienie krwi', 'brak pomiarow w okresie'))
+  } else out.push(line('Ciśnienie krwi', 'brak pomiarów w okresie'))
 
   const rhr = latestMeasurement(d.measurements, 'resting_heart_rate')
-  if (rhr) out.push(line('Tetno spoczynkowe (pomiar reczny)', `${fmt(rhr.value, 0)} bpm (${formatDatePl(rhr.date)})`))
+  if (rhr) out.push(line('Tętno spoczynkowe (pomiar ręczny)', `${fmt(rhr.value, 0)} bpm (${formatDatePl(rhr.date)})`))
   return out
 }
 
 function labTable(d: ExportDataset): string[] {
-  if (d.labResults.length === 0) return ['Brak wynikow badan w wybranym okresie.']
+  if (d.labResults.length === 0) return ['Brak wyników badań w wybranym okresie.']
   const header = ['| Date | Test | Value | Unit | Reference | Lab | Fasting | Change vs previous |', '|---|---|---|---|---|---|---|---|']
   const previousByKey = new Map(d.previousLabResults.map((r) => [r.testKey, r]))
   const seen = new Map<string, LabResult>()
@@ -119,10 +119,10 @@ function trendsSection(d: ExportDataset): string[] {
     if (!s || s.n === 0) continue
     if (s.previousMean != null && s.changePercent != null && s.previousN >= 3) {
       out.push(
-        `- ${s.metric.label}: srednia ${s.metric.format(s.mean)} wobec ${s.metric.format(s.previousMean)} w poprzednim okresie ${s.days} dni (${fmtPercent(s.changePercent)}; dni z danymi: ${s.n}/${s.days} i ${s.previousN}/${s.days}).`,
+        `- ${s.metric.label}: średnia ${s.metric.format(s.mean)} wobec ${s.metric.format(s.previousMean)} w poprzednim okresie ${s.days} dni (${fmtPercent(s.changePercent)}; dni z danymi: ${s.n}/${s.days} i ${s.previousN}/${s.days}).`,
       )
     } else {
-      out.push(`- ${s.metric.label}: srednia ${s.metric.format(s.mean)} (dni z danymi: ${s.n}/${s.days}; brak porownywalnego poprzedniego okresu).`)
+      out.push(`- ${s.metric.label}: średnia ${s.metric.format(s.mean)} (dni z danymi: ${s.n}/${s.days}; brak porównywalnego poprzedniego okresu).`)
     }
   }
   return out.length ? out : ['Za malo danych, aby opisac zmiany w czasie.']
@@ -133,25 +133,25 @@ function correlationsSection(d: ExportDataset, shortSleepMinutes: number): strin
   const correlations = computeAllCorrelations(d.entries).filter((c) => c.hasEnoughData && c.strength !== 'brak')
   for (const c of correlations) {
     out.push(
-      `- ${c.label}${c.nextDay ? ' (efekt liczony dla dnia nastepnego)' : ''}: Spearman rho = ${fmt(round(c.rho, 2), 2)} (zaleznosc ${c.direction}, ${c.strength}; n = ${c.n}${c.preliminary ? '; wynik wstepny, ponizej 30 dni' : ''}).`,
+      `- ${c.label}${c.nextDay ? ' (efekt liczony dla dnia następnego)' : ''}: Spearman rho = ${fmt(round(c.rho, 2), 2)} (zależność ${c.direction}, ${c.strength}; n = ${c.n}${c.preliminary ? '; wynik wstępny, poniżej 30 dni' : ''}).`,
     )
   }
 
   const cmp = compareByThreshold(d.entries, 'totalSleepMinutes', shortSleepMinutes, 'irritability')
   if (cmp && cmp.belowN >= 5 && cmp.atOrAboveN >= 5) {
     out.push(
-      `- Rozdraznienie w dniach ze snem ponizej ${formatMinutes(shortSleepMinutes)}: ${fmt(cmp.belowMean, 1)} (n = ${cmp.belowN}) wobec ${fmt(cmp.atOrAboveMean, 1)} (n = ${cmp.atOrAboveN}) w pozostalych dniach.`,
+      `- Rozdrażnienie w dniach ze snem poniżej ${formatMinutes(shortSleepMinutes)}: ${fmt(cmp.belowMean, 1)} (n = ${cmp.belowN}) wobec ${fmt(cmp.atOrAboveMean, 1)} (n = ${cmp.atOrAboveN}) w pozostalych dniach.`,
     )
   }
   const energyCmp = compareByThreshold(d.entries, 'totalSleepMinutes', shortSleepMinutes, 'energy')
   if (energyCmp && energyCmp.belowN >= 5 && energyCmp.atOrAboveN >= 5) {
     out.push(
-      `- Energia w dniach ze snem ponizej ${formatMinutes(shortSleepMinutes)}: ${fmt(energyCmp.belowMean, 1)} (n = ${energyCmp.belowN}) wobec ${fmt(energyCmp.atOrAboveMean, 1)} (n = ${energyCmp.atOrAboveN}) w pozostalych dniach.`,
+      `- Energia w dniach ze snem poniżej ${formatMinutes(shortSleepMinutes)}: ${fmt(energyCmp.belowMean, 1)} (n = ${energyCmp.belowN}) wobec ${fmt(energyCmp.atOrAboveMean, 1)} (n = ${energyCmp.atOrAboveN}) w pozostalych dniach.`,
     )
   }
 
-  if (out.length === 0) return [`Brak zaleznosci z wystarczajaca liczba danych (wymagane minimum 14 dni wspolnych obserwacji). ${CORRELATION_DISCLAIMER}`]
-  return [`(uwzgledniono wylacznie zaleznosci z n >= 14 dni; ${CORRELATION_DISCLAIMER})`, ...out]
+  if (out.length === 0) return [`Brak zależności z wystarczajaca liczba danych (wymagane minimum 14 dni wspolnych obserwacji). ${CORRELATION_DISCLAIMER}`]
+  return [`(uwzgledniono wyłącznie zależności z n >= 14 dni; ${CORRELATION_DISCLAIMER})`, ...out]
 }
 
 function missingDataSection(d: ExportDataset): string[] {
@@ -168,15 +168,15 @@ function missingDataSection(d: ExportDataset): string[] {
   const measurementTypes: MeasurementType[] = ['body_weight', 'waist', 'blood_pressure']
   for (const type of measurementTypes) {
     const count = d.measurements.filter((m) => m.type === type).length
-    if (count === 0) out.push(line(MEASUREMENT_LABELS[type], 'brak pomiarow w okresie'))
+    if (count === 0) out.push(line(MEASUREMENT_LABELS[type], 'brak pomiarów w okresie'))
   }
 
   const stale = staleLabTests(d.labTests, [...d.labResults, ...d.previousLabResults], 180, d.to)
   if (stale.length) {
     const noResult = stale.filter((s) => s.lastDate === null).map((s) => s.label)
     const old = stale.filter((s) => s.lastDate !== null)
-    if (noResult.length) out.push(line('Badania bez zadnego wyniku', noResult.join(', ')))
-    for (const s of old) out.push(line(`Badanie starsze niz 180 dni: ${s.label}`, `ostatni wynik ${formatDatePl(s.lastDate as string)} (${s.daysAgo} dni temu)`))
+    if (noResult.length) out.push(line('Badania bez żadnego wyniku', noResult.join(', ')))
+    for (const s of old) out.push(line(`Badanie starsze niż 180 dni: ${s.label}`, `ostatni wynik ${formatDatePl(s.lastDate as string)} (${s.daysAgo} dni temu)`))
   }
   return out
 }
@@ -219,10 +219,10 @@ export function buildMarkdownReport(d: ExportDataset): string {
 
   md.push('## Sleep')
   for (const key of SLEEP_METRICS) md.push(metricLine(d, key))
-  md.push(line('Dni z danymi z urzadzenia noszonego', `${watchDays}/${d.days}`), '')
+  md.push(line('Dni z danymi z urządzenia noszonego', `${watchDays}/${d.days}`), '')
 
   md.push('## Subjective wellbeing')
-  md.push('Skale subiektywne 1-10 (10 = najwyzsza wartosc danej cechy).')
+  md.push('Skale subiektywne 1-10 (10 = najwyzsza wartość danej cechy).')
   for (const key of WELLBEING_METRICS) md.push(metricLine(d, key))
   md.push('')
 
@@ -242,16 +242,16 @@ export function buildMarkdownReport(d: ExportDataset): string {
     line(
       'Kofeina',
       caffeine && caffeine.n > 0
-        ? `${fmt(caffeine.mean, 1)} porcji espresso/dzien (~${fmt((caffeine.mean ?? 0) * d.settings.mgPerEspresso, 0)} mg; dni z danymi: ${caffeine.n}/${caffeine.days})`
+        ? `${fmt(caffeine.mean, 1)} porcji espresso/dzień (~${fmt((caffeine.mean ?? 0) * d.settings.mgPerEspresso, 0)} mg; dni z danymi: ${caffeine.n}/${caffeine.days})`
         : 'brak danych',
     ),
   )
   if (caffeineTimes.length) md.push(line('Typowa godzina ostatniej kofeiny', `${caffeineTimes.sort()[Math.floor(caffeineTimes.length / 2)]} (mediana z ${caffeineTimes.length} dni)`))
-  md.push(line('Alkohol', alcohol && alcohol.n > 0 ? `${fmt(alcohol.mean, 2)} jednostki/dzien (dni z danymi: ${alcohol.n}/${alcohol.days})` : 'brak danych'))
-  md.push(line('Woda', water && water.n > 0 ? `${fmt((water.mean ?? 0) / 1000, 1)} l/dzien (dni z danymi: ${water.n}/${water.days})` : 'brak danych'))
+  md.push(line('Alkohol', alcohol && alcohol.n > 0 ? `${fmt(alcohol.mean, 2)} jednostki/dzień (dni z danymi: ${alcohol.n}/${alcohol.days})` : 'brak danych'))
+  md.push(line('Woda', water && water.n > 0 ? `${fmt((water.mean ?? 0) / 1000, 1)} l/dzień (dni z danymi: ${water.n}/${water.days})` : 'brak danych'))
   md.push(line('Dni oznaczone jako nietypowo stresujace', `${stressDays}/${d.days}`))
   md.push(line('Dni oznaczone jako infekcja/choroba', `${illnessDays}/${d.days}`))
-  md.push(line('Notatki', notes.length ? `${notes.length} wpisow (tresc w sekcji Appendix)` : 'brak'))
+  md.push(line('Notatki', notes.length ? `${notes.length} wpisów (treść w sekcji Appendix)` : 'brak'))
   md.push('')
 
   md.push('## Laboratory results')
@@ -276,9 +276,9 @@ export function buildMarkdownReport(d: ExportDataset): string {
 
   md.push('## Context for the analyst')
   md.push(
-    '- Dane pochodza z wlasnego dziennika (skale subiektywne) oraz z zegarka; fazy snu i HRV z urzadzenia noszonego nie sa pomiarem klinicznym.',
-    '- Wartosci laboratoryjne zapisane sa razem z jednostka i zakresem referencyjnym tego laboratorium z dnia badania; zakresy roznych laboratoriow moga sie roznic.',
-    '- Zestawienie jest opisem zebranych danych, bez interpretacji medycznej i bez zalecen.',
+    '- Dane pochodzą z własnego dziennika (skale subiektywne) oraz z zegarka; fazy snu i HRV z urządzenia noszonego nie są pomiarem klinicznym.',
+    '- Wartości laboratoryjne zapisane są razem z jednostka i zakresem referencyjnym tego laboratorium z dnia badania; zakresy roznych laboratoriow moga się roznic.',
+    '- Zestawienie jest opisem zebranych danych, bez interpretacji medycznej i bez zaleceń.',
     `- ${CORRELATION_DISCLAIMER}`,
     '',
   )

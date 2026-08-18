@@ -16,7 +16,7 @@ export function buildJsonExport(d: ExportDataset): unknown {
     generated_at: d.generatedAt,
     app: 'GPTHealthTracker',
     disclaimer:
-      'Dane samoraportowane oraz z urzadzenia noszonego. Zestawienie nie zawiera interpretacji medycznych ani zalecen.',
+      'Dane samoraportowane oraz z urządzenia noszonego. Zestawienie nie zawiera interpretacji medycznych ani zaleceń.',
     period: { from: d.from, to: d.to, days: d.days },
     daily: d.entries,
     measurements: d.measurements,
@@ -64,7 +64,7 @@ export function buildJsonExport(d: ExportDataset): unknown {
           spearman_rho: round(c.rho, 3),
           strength: c.strength,
           preliminary: c.preliminary,
-          note: 'Korelacja nie oznacza przyczynowosci.',
+          note: 'Korelacja nie oznacza przyczynowości.',
         })),
     },
     completeness: {

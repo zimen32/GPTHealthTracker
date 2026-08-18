@@ -5,20 +5,20 @@ import { buildDailyPreview, buildLabPreview, slugify } from './apply'
 import { parseClock, parseDate, parseDurationMinutes, parseNumber, suggestMapping } from './fields'
 import { flattenJson, parseDelimited } from './parse'
 
-describe('parsowanie plikow', () => {
+describe('parsowanie plików', () => {
   it('czyta CSV z cudzyslowami i przecinkami w polu', () => {
     const table = parseDelimited('date,steps,notes\n2026-08-17,8200,"praca, dyzur"\n')
     expect(table.headers).toEqual(['date', 'steps', 'notes'])
     expect(table.rows[0]).toEqual({ date: '2026-08-17', steps: '8200', notes: 'praca, dyzur' })
   })
 
-  it('rozpoznaje separator srednikowy uzywany przez polskie arkusze', () => {
+  it('rozpoznaje separator średnikowy używany przez polskie arkusze', () => {
     const table = parseDelimited('date;value\n2026-08-17;7,5\n')
     expect(table.delimiter).toBe(';')
     expect(table.rows[0].value).toBe('7,5')
   })
 
-  it('splaszcza JSON z zagniezdzona tablica rekordow', () => {
+  it('spłaszcza JSON z zagniezdzona tablica rekordow', () => {
     const table = flattenJson({
       meta: { app: 'x' },
       records: [
@@ -31,7 +31,7 @@ describe('parsowanie plikow', () => {
   })
 })
 
-describe('konwersje wartosci', () => {
+describe('konwersje wartości', () => {
   it('czyta liczby z przecinkiem dziesietnym', () => {
     expect(parseNumber('7,5')).toBe(7.5)
     expect(parseNumber(' 41 ')).toBe(41)
@@ -56,7 +56,7 @@ describe('konwersje wartosci', () => {
     expect(parseDurationMinutes('6:52')).toBe(412)
     expect(parseDurationMinutes('6h 52m')).toBe(412)
     expect(parseDurationMinutes('7,5 h')).toBe(450)
-    expect(parseDurationMinutes('24720')).toBe(412) // sekundy z eksportu urzadzenia
+    expect(parseDurationMinutes('24720')).toBe(412) // sekundy z eksportu urządzenia
   })
 
   it('proponuje mapowanie kolumn na podstawie ich nazw', () => {
@@ -72,13 +72,13 @@ describe('konwersje wartosci', () => {
   })
 })
 
-describe('podglad importu danych dziennych', () => {
+describe('podgląd importu danych dziennych', () => {
   const table = parseDelimited(
     ['date,total_sleep,deep,rem,rhr,hrv,steps', '2026-08-16,6:52,58,71,61,42,8200', '2026-08-17,7:10,64,80,59,47,10400', 'brak-daty,7:00,,,,,'].join('\n'),
   )
   const map = suggestMapping(table.headers)
 
-  it('rozpoznaje nowe dni, aktualizacje i wiersze bledne', () => {
+  it('rozpoznaje nowe dni, aktualizacje i wiersze błędne', () => {
     const existing: DailyEntry[] = [{ date: '2026-08-16', energy: 5 }]
     const preview = buildDailyPreview(table, map, existing)
     expect(preview.counts.new).toBe(1)
@@ -88,7 +88,7 @@ describe('podglad importu danych dziennych', () => {
     expect(preview.rows[2].problems[0]).toContain('brak rozpoznanej daty')
   })
 
-  it('oznacza konflikt, gdy istniejaca wartosc rozni sie od importowanej', () => {
+  it('oznacza konflikt, gdy istniejaca wartość rozni się od importowanej', () => {
     const existing: DailyEntry[] = [{ date: '2026-08-16', totalSleepMinutes: 400 }]
     const preview = buildDailyPreview(table, map, existing)
     const row = preview.rows[0]
@@ -97,7 +97,7 @@ describe('podglad importu danych dziennych', () => {
     expect(preview.counts.conflict).toBe(1)
   })
 
-  it('wylicza dlugosc snu z godzin, gdy plik nie zawiera sumy', () => {
+  it('wylicza długość snu z godzin, gdy plik nie zawiera sumy', () => {
     const t = parseDelimited('date,sleep start,wake\n2026-08-17,23:40,06:20\n')
     const preview = buildDailyPreview(t, suggestMapping(t.headers), [])
     expect(preview.rows[0].values.totalSleepMinutes).toBe(400)
@@ -109,18 +109,18 @@ describe('podglad importu danych dziennych', () => {
   })
 })
 
-describe('podglad importu wynikow badan', () => {
+describe('podgląd importu wyników badań', () => {
   const csv = [
     'date,test,value,unit,ref_min,ref_max,laboratory,fasting,notes',
     '2026-07-14,Ferrytyna,38,ng/ml,30,400,Lab X,tak,',
     '14.07.2026,TSH,2:1,mIU/l,0.27,4.2,Lab X,tak,',
-    '2026-07-14,Wlasny parametr,12,mg/l,,,Lab X,nie,',
+    '2026-07-14,Własny parametr,12,mg/l,,,Lab X,nie,',
     ',Ferrytyna,,,,,,,',
   ].join('\n')
   const table = parseDelimited(csv)
   const map = Object.fromEntries(table.headers.map((h) => [h, h]))
 
-  it('mapuje nazwy parametrow na katalog i zachowuje jednostke oraz zakres z pliku', () => {
+  it('mapuje nazwy parametrów na katalog i zachowuje jednostkę oraz zakres z pliku', () => {
     const preview = buildLabPreview(table, map, LAB_CATALOG)
     expect(preview[0].status).toBe('ok')
     expect(preview[0].result).toMatchObject({ testKey: 'ferritin', value: 38, unit: 'ng/ml', refMin: 30, refMax: 400, laboratory: 'Lab X', fasting: true })
@@ -132,15 +132,15 @@ describe('podglad importu wynikow badan', () => {
     expect(preview[2].result?.testKey).toBe('wlasny_parametr')
   })
 
-  it('odrzuca wiersz bez daty i bez wartosci, opisujac problem', () => {
+  it('odrzuca wiersz bez daty i bez wartości, opisujac problem', () => {
     const preview = buildLabPreview(table, map, LAB_CATALOG)
     expect(preview[3].status).toBe('invalid')
     expect(preview[3].problems).toContain('brak rozpoznanej daty')
-    expect(preview[3].problems).toContain('brak wartosci wyniku')
+    expect(preview[3].problems).toContain('brak wartości wyniku')
   })
 
   it('tworzy klucz parametru bez polskich znakow', () => {
-    expect(slugify('Zelazo (Fe) - surowica')).toBe('zelazo_fe_surowica')
+    expect(slugify('Żelazo (Fe) - surowica')).toBe('zelazo_fe_surowica')
     expect(slugify('Witamina D 25(OH)')).toBe('witamina_d_25_oh')
   })
 })

@@ -4,9 +4,9 @@ export const LAB_CATEGORY_LABELS: Record<LabCategory, string> = {
   cbc: 'Morfologia',
   metabolic: 'Metabolizm',
   lipids: 'Lipidy',
-  liver: 'Watroba',
+  liver: 'Wątroba',
   thyroid: 'Tarczyca',
-  iron: 'Zelazo',
+  iron: 'Żelazo',
   vitamins: 'Witaminy',
   inflammation: 'Stan zapalny',
   urine: 'Mocz',
@@ -14,8 +14,8 @@ export const LAB_CATEGORY_LABELS: Record<LabCategory, string> = {
 }
 
 /**
- * Katalog startowy parametrow. Jednostki to typowe jednostki polskich laboratoriow -
- * uzytkownik moze je nadpisac przy kazdym wyniku, bo jednostka jest zapisywana razem z wynikiem.
+ * Katalog startowy parametrów. Jednostki to typowe jednostki polskich laboratoriow -
+ * uzytkownik może je nadpisać przy kazdym wyniku, bo jednostka jest zapisywana razem z wynikiem.
  */
 export const LAB_CATALOG: LabTest[] = [
   // morfologia
@@ -23,7 +23,7 @@ export const LAB_CATALOG: LabTest[] = [
   { key: 'hematocrit', name: 'Hematokryt (HCT)', category: 'cbc', defaultUnit: '%' },
   { key: 'rbc', name: 'Erytrocyty (RBC)', category: 'cbc', defaultUnit: 'mln/ul' },
   { key: 'wbc', name: 'Leukocyty (WBC)', category: 'cbc', defaultUnit: 'tys./ul' },
-  { key: 'platelets', name: 'Plytki krwi (PLT)', category: 'cbc', defaultUnit: 'tys./ul' },
+  { key: 'platelets', name: 'Płytki krwi (PLT)', category: 'cbc', defaultUnit: 'tys./ul' },
   { key: 'mcv', name: 'MCV', category: 'cbc', defaultUnit: 'fl' },
   { key: 'mch', name: 'MCH', category: 'cbc', defaultUnit: 'pg' },
   { key: 'mchc', name: 'MCHC', category: 'cbc', defaultUnit: 'g/dl' },
@@ -38,27 +38,27 @@ export const LAB_CATALOG: LabTest[] = [
   { key: 'hba1c', name: 'HbA1c', category: 'metabolic', defaultUnit: '%' },
   { key: 'creatinine', name: 'Kreatynina', category: 'metabolic', defaultUnit: 'mg/dl' },
   { key: 'egfr', name: 'eGFR', category: 'metabolic', defaultUnit: 'ml/min/1,73m2' },
-  { key: 'sodium', name: 'Sod', category: 'metabolic', defaultUnit: 'mmol/l' },
+  { key: 'sodium', name: 'Sód', category: 'metabolic', defaultUnit: 'mmol/l' },
   { key: 'potassium', name: 'Potas', category: 'metabolic', defaultUnit: 'mmol/l' },
-  { key: 'calcium', name: 'Wapn', category: 'metabolic', defaultUnit: 'mg/dl' },
+  { key: 'calcium', name: 'Wapń', category: 'metabolic', defaultUnit: 'mg/dl' },
   { key: 'magnesium', name: 'Magnez', category: 'metabolic', defaultUnit: 'mg/dl' },
   // lipidy
-  { key: 'total_cholesterol', name: 'Cholesterol calkowity', category: 'lipids', defaultUnit: 'mg/dl' },
+  { key: 'total_cholesterol', name: 'Cholesterol całkowity', category: 'lipids', defaultUnit: 'mg/dl' },
   { key: 'ldl', name: 'LDL', category: 'lipids', defaultUnit: 'mg/dl' },
   { key: 'hdl', name: 'HDL', category: 'lipids', defaultUnit: 'mg/dl' },
-  { key: 'triglycerides', name: 'Trojglicerydy', category: 'lipids', defaultUnit: 'mg/dl' },
+  { key: 'triglycerides', name: 'Trójglicerydy', category: 'lipids', defaultUnit: 'mg/dl' },
   { key: 'lp_a', name: 'Lp(a)', category: 'lipids', defaultUnit: 'mg/dl' },
-  // watroba
+  // wątroba
   { key: 'alt', name: 'ALT', category: 'liver', defaultUnit: 'U/l' },
   { key: 'ast', name: 'AST', category: 'liver', defaultUnit: 'U/l' },
   { key: 'ggtp', name: 'GGTP', category: 'liver', defaultUnit: 'U/l' },
-  { key: 'bilirubin_total', name: 'Bilirubina calkowita', category: 'liver', defaultUnit: 'mg/dl' },
+  { key: 'bilirubin_total', name: 'Bilirubina całkowita', category: 'liver', defaultUnit: 'mg/dl' },
   // tarczyca
   { key: 'tsh', name: 'TSH', category: 'thyroid', defaultUnit: 'mIU/l' },
   { key: 'ft4', name: 'FT4', category: 'thyroid', defaultUnit: 'pmol/l' },
-  // zelazo
+  // żelazo
   { key: 'ferritin', name: 'Ferrytyna', category: 'iron', defaultUnit: 'ng/ml' },
-  { key: 'iron', name: 'Zelazo', category: 'iron', defaultUnit: 'ug/dl' },
+  { key: 'iron', name: 'Żelazo', category: 'iron', defaultUnit: 'ug/dl' },
   { key: 'tibc', name: 'TIBC', category: 'iron', defaultUnit: 'ug/dl' },
   { key: 'uibc', name: 'UIBC', category: 'iron', defaultUnit: 'ug/dl' },
   { key: 'transferrin', name: 'Transferyna', category: 'iron', defaultUnit: 'mg/dl' },
@@ -69,18 +69,18 @@ export const LAB_CATALOG: LabTest[] = [
   // stan zapalny
   { key: 'crp', name: 'CRP', category: 'inflammation', defaultUnit: 'mg/l' },
   // mocz
-  { key: 'urinalysis', name: 'Badanie ogolne moczu', category: 'urine', defaultUnit: '-', textual: true },
+  { key: 'urinalysis', name: 'Badanie ogólne moczu', category: 'urine', defaultUnit: '-', textual: true },
 ].map((t, i) => ({ ...t, sortOrder: i, isCustom: false }) as LabTest)
 
 export const MEASUREMENT_LABELS: Record<MeasurementType, string> = {
-  body_weight: 'Masa ciala',
+  body_weight: 'Masa ciała',
   waist: 'Talia',
   chest: 'Klatka piersiowa',
-  arm: 'Ramie',
+  arm: 'Ramię',
   thigh: 'Udo',
-  calf: 'Lydka',
-  blood_pressure: 'Cisnienie krwi',
-  resting_heart_rate: 'Tetno spoczynkowe',
+  calf: 'Łydka',
+  blood_pressure: 'Ciśnienie krwi',
+  resting_heart_rate: 'Tętno spoczynkowe',
 }
 
 export const MEASUREMENT_UNITS: Record<MeasurementType, string> = {
@@ -94,7 +94,7 @@ export const MEASUREMENT_UNITS: Record<MeasurementType, string> = {
   resting_heart_rate: 'bpm',
 }
 
-/** Domyslne czestotliwosci - swiadomie rzadkie, aplikacja nie wymaga codziennych pomiarow. */
+/** Domyslne częstotliwości - świadomie rzadkie, aplikacja nie wymaga codziennych pomiarów. */
 export const DEFAULT_SCHEDULES: Array<{ type: MeasurementType; intervalDays: number; enabled: boolean }> = [
   { type: 'body_weight', intervalDays: 7, enabled: true },
   { type: 'waist', intervalDays: 30, enabled: true },
@@ -109,8 +109,8 @@ export const DEFAULT_SCHEDULES: Array<{ type: MeasurementType; intervalDays: num
 export const SCORE_LABELS: Record<string, string> = {
   energy: 'Energia',
   stress: 'Stres',
-  irritability: 'Rozdraznienie',
+  irritability: 'Rozdrażnienie',
   recovery: 'Regeneracja',
-  mood: 'Nastroj',
-  clarity: 'Jasnosc umyslu',
+  mood: 'Nastrój',
+  clarity: 'Jasność umysłu',
 }

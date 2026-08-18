@@ -29,8 +29,8 @@ async function journal(
 }
 
 /**
- * Zapisuje wpis dzienny. Pola nieobecne w `patch` pozostaja bez zmian,
- * pola ustawione na `null` sa czyszczone swiadomie (uzytkownik cofnal wartosc).
+ * Zapisuje wpis dzienny. Pola nieobecne w `patch` pozostają bez zmian,
+ * pola ustawione na `null` są czyszczone świadomie (uzytkownik cofnal wartość).
  */
 export async function saveDailyEntry(
   patch: Partial<DailyEntry> & { date: IsoDate },
@@ -136,7 +136,7 @@ export async function upsertLabTest(t: LabTest, database: HealthDb = db): Promis
 }
 
 /**
- * Dodaje wynik badania. `unit`, `refMin`, `refMax` i `laboratory` sa snapshotem -
+ * Dodaje wynik badania. `unit`, `refMin`, `refMax` i `laboratory` są snapshotem -
  * pozniejsza zmiana katalogu lub zakresow laboratorium nie modyfikuje tego wpisu.
  */
 export async function addLabResult(
@@ -217,7 +217,7 @@ export async function saveMapping(m: ImportMapping, database: HealthDb = db): Pr
   return database.mappings.put(row) as unknown as number
 }
 
-/** Daty (do `limitDays` w tyl), dla ktorych nie ma zadnego wpisu - do paska "uzupelnij". */
+/** Daty (do `limitDays` w tyl), dla których nie ma żadnego wpisu - do paska "uzupełnij". */
 export async function findMissingDays(limitDays = 7, database: HealthDb = db): Promise<IsoDate[]> {
   const { lastNDays } = await import('../lib/date')
   const days = lastNDays(limitDays, today())
